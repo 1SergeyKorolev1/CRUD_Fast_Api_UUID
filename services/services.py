@@ -17,7 +17,15 @@ def create_task(db: Session, data: TaskCreate):
 def get_tasks(db: Session):
     return db.query(Task).all()
 
-def get_task(db: Session, task_uuid:str):
-    return db.query(Task).filter(Task.uuid==task_uuid).first()
+def get_task(db: Session, task_uuid: str):
+    try:
+        task_object = db.query(Task).filter(Task.uuid == task_uuid).first()
+        if task_object:
+            print(task_object)
+            return task_object
+        raise HTTPException(status_code=400, detail=f"неверный UUID")
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Ошибка при получении задачи {str(e)}") from e
+
 
 

@@ -11,6 +11,14 @@ app = FastAPI()
 def get_all_tasks(db: Session = Depends(get_db)):
     return services.get_tasks(db)
 
+@app.get("/task/{uuid}", response_model=schemas.Task)
+def get_task_by_uuid(uuid: str, db: Session = Depends(get_db)):
+    try:
+        task_queryset = services.get_task(db, uuid)
+        return task_queryset
+    except Exception:
+        raise HTTPException(status_code=404, detail="Неверный UUID")
+
 @app.post("/tasks/", response_model=schemas.Task)
 def create_new_task(task: schemas.TaskCreate, db: Session = Depends(get_db)):
     return services.create_task(db, task)
