@@ -22,3 +22,11 @@ def get_task_by_uuid(uuid: str, db: Session = Depends(get_db)):
 @app.post("/tasks/", response_model=schemas.Task)
 def create_new_task(task: schemas.TaskCreate, db: Session = Depends(get_db)):
     return services.create_task(db, task)
+
+@app.put("/task/{uuid}", response_model=schemas.Task)
+def update_task_by_uuid(task: schemas.TaskCreate, uuid: str, db: Session = Depends(get_db)):
+    try:
+        task_queryset = services.update_task(db, task, uuid)
+        return task_queryset
+    except Exception as e:
+        raise HTTPException(status_code=404, detail=f"Неверный UUID - {str(e)}") from e

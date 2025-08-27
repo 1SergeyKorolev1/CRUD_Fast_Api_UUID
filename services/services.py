@@ -25,5 +25,17 @@ def get_task(db: Session, task_uuid: str):
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Ошибка при получении задачи {str(e)}") from e
 
+def update_task(db: Session, task: TaskCreate, task_uuid: str):
+    try:
+        task_object = get_task(db, task_uuid)
+        if task_object:
+            for key, value in task.model_dump().items():
+                setattr(task_object, key, value)
+            db.commit()
+            db.refresh(task_object)
+            return task_object
+        raise HTTPException(status_code=400, detail=f"неверный UUID")
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Ошибка при обновлении задачи {str(e)}") from e
 
 
