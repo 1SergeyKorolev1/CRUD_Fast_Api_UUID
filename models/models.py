@@ -8,9 +8,9 @@ from db import Base
 
 
 class StatusEnum(str, enum.Enum):
-    created = "created"
-    in_progress = "in_progress"
-    completed = "completed"
+    created = "создано"
+    in_progress = "в работе"
+    completed = "завершено"
 
 
 class Task(Base):
