@@ -38,4 +38,13 @@ def update_task(db: Session, task: TaskCreate, task_uuid: str):
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Ошибка при обновлении задачи {str(e)}") from e
 
-
+def delete_task(db: Session, uuid: str):
+    try:
+        task_object = get_task(db, uuid)
+        if task_object:
+            db.delete(task_object)
+            db.commit()
+            return task_object
+        raise HTTPException(status_code=400, detail=f"неверный UUID")
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Ошибка при обновлении задачи {str(e)}") from e

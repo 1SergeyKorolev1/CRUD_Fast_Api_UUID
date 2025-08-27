@@ -30,3 +30,11 @@ def update_task_by_uuid(task: schemas.TaskCreate, uuid: str, db: Session = Depen
         return task_queryset
     except Exception as e:
         raise HTTPException(status_code=404, detail=f"Неверный UUID - {str(e)}") from e
+
+@app.delete("/task/{uuid}", response_model=schemas.Task)
+def delete_task_by_uuid(uuid: str, db: Session = Depends(get_db)):
+    try:
+        delete_entry = services.delete_task(db, uuid)
+        return delete_entry
+    except Exception as e:
+        raise HTTPException(status_code=404, detail=f"Неверный UUID - {str(e)}") from e
