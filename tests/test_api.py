@@ -53,6 +53,25 @@ async def test_get_task():
         for key in required_keys:
             assert key in data_task, f"Ключ '{key}' отсутствует в ответе"
 
+@pytest.mark.asyncio
+async def test_edit_task():
+    async with AsyncClient(
+            transport=ASGITransport(app=app),
+            base_url="http://test"
+    ) as ac:
+        response = await ac.get("/tasks/")
+        data = response.json()
+        response_task = await ac.put(f"/task/{data[0]["uuid"]}", json={
+            "title": "test_title_edit",
+            "description": "test_description_edit",
+            "status": "в работе"
+        })
+        data_task = response_task.json()
+        for key in required_keys:
+            assert key in data_task, f"Ключ '{key}' отсутствует в ответе"
+        assert data_task["title"] == "test_title_edit"
+        assert data_task["description"] == "test_description_edit"
+        assert data_task["status"] == "в работе"
 
 @pytest.mark.asyncio
 async def test_delete_task():
