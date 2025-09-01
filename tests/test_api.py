@@ -21,6 +21,19 @@ async def test_create_task():
             assert key in data, f"Ключ '{key}' отсутствует в ответе"
 
 @pytest.mark.asyncio
+async def test_create_task_error():
+    async with AsyncClient(
+        transport=ASGITransport(app=app),
+        base_url="http://test"
+    ) as ac:
+        response = await ac.post("/tasks/", json={
+            "title": "test_title",
+            "description": "test_description",
+            "status": "не валидный статус"
+        })
+        assert response.status_code == 400
+
+@pytest.mark.asyncio
 async def test_get_tasks_status():
     async with AsyncClient(
         transport=ASGITransport(app=app),
