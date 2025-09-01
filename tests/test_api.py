@@ -67,6 +67,15 @@ async def test_get_task():
             assert key in data_task, f"Ключ '{key}' отсутствует в ответе"
 
 @pytest.mark.asyncio
+async def test_get_task_error():
+    async with AsyncClient(
+            transport=ASGITransport(app=app),
+            base_url="http://test"
+    ) as ac:
+        response_task = await ac.get(f"/task/bcf98280-5e44-423f-9986-a52")
+        assert response_task.status_code == 404
+
+@pytest.mark.asyncio
 async def test_edit_task():
     async with AsyncClient(
             transport=ASGITransport(app=app),
@@ -87,6 +96,30 @@ async def test_edit_task():
         assert data_task["status"] == "в работе"
 
 @pytest.mark.asyncio
+async def test_edit_task_error():
+    async with AsyncClient(
+            transport=ASGITransport(app=app),
+            base_url="http://test"
+    ) as ac:
+        response = await ac.get("/tasks/")
+        data = response.json()
+        response_task = await ac.put(f"/task/{data[0]["uuid"]}", json={
+            "title": "test_title_edit",
+            "description": "test_description_edit",
+            "status": "не валидный статус"
+        })
+        assert response_task.status_code == 404
+
+@pytest.mark.asyncio
+async def test_delete_task_error():
+    async with AsyncClient(
+            transport=ASGITransport(app=app),
+            base_url="http://test"
+    ) as ac:
+        response_delete = await ac.delete(f"/task/bcf98280-5e44-423f-9986-a52")
+        assert response_delete.status_code == 404
+
+@pytest.mark.asyncio
 async def test_delete_task():
     async with AsyncClient(
             transport=ASGITransport(app=app),
@@ -94,7 +127,6 @@ async def test_delete_task():
     ) as ac:
         response = await ac.get("/tasks/")
         data = response.json()
-        print(data)
         response_delete = await ac.delete(f"/task/{data[0]['uuid']}")
         assert response_delete.status_code == 200
 
