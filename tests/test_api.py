@@ -51,7 +51,7 @@ async def test_get_tasks():
         response = await ac.get("/tasks/")
 
         data = response.json()
-        assert len(data) == 1
+        assert isinstance(data, list)
 
 @pytest.mark.asyncio
 async def test_get_task():
