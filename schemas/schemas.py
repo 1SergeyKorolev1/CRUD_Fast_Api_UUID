@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class TaskBase(BaseModel):
@@ -16,5 +16,7 @@ class TaskCreate(TaskBase):
 class Task(TaskBase):
     uuid: UUID
 
-    class Config:
-        from_attribute = True
+    model_config = ConfigDict(
+        from_attributes=True
+    )
+
